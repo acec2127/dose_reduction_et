@@ -1,0 +1,16 @@
+name: diffusion_cea_env
+channels:
+  - anaconda
+  - pytorch
+  - nvidia
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.11.5
+  - pytorch=2.1.0
+  - torchvision=0.16.0
+  - tqdm=4.66.1
+  - requests=2.31.0
+  - psutil=5.9.0
+  - hydra-core=1.3.2
+  - numba=0.58.1

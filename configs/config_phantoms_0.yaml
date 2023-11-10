@@ -1,0 +1,207 @@
+training:
+  options:
+    # Results path
+    run_dir: 'results'
+    # Random seed, will be chosen at random if None 
+    seed: Null
+    # Total batch size 
+    batch_size: 32
+    # Max batch size per gpu
+    batch_gpu: Null
+    # Duration in KIMG
+    total_kimg: 600
+    # EMA half-life in KIMG
+    ema_halflife_kimg : 15
+    # EMA ramp-up ratio, None = no rampup.
+    ema_rampup_ratio: 0.05  
+    # Maximum learning rate  
+    lr_max: 2.e-4   
+    # Learning rate ramp-up ratio of total amount of training, need to be comprised between 0 and 1. 
+    lr_rampup_ratio: 0.1
+    # Sarting learning rate            
+    lr_start: 1.e-5 
+    # End Learning rate                 
+    lr_end: 4.e-6                      
+    # How often to print progress in KIMG
+    kimg_per_tick: 10
+    # How often to save snapshots in ticks
+    snapshot_ticks: 4
+    # How often to dump state per tick
+    state_dump_ticks: 8
+    # Transfer learning from network pickle
+    resume_pkl: Null
+    # Resume from previous training state
+    resume_state_dump: Null
+    # Enable cuDNN benchmarking
+    cudnn_benchmark: True
+
+  secondary_options:
+    # Type of training : [images, pet]
+    training_type: 'pet'
+    # Train classifier-free guided class conditional model 
+    guided_cond: False 
+    # Dataset name
+    dataset_name: 'BrainWebSinogramsClean'
+    # String to throw in description string
+    desc: Null
+
+  dataset:
+    _target_: training.dataset.BrainWebSinogramsClean
+    # Data path
+    path: 'datasets/brainweb_low_res'
+    # mode 
+    mode: 'train'
+    # High dose mean int
+    dose_mean_int: 1.e+6
+    preprocessed: True
+  
+  network:
+    _target_: training.networks.EDMPrecond
+    # Options to convert list into actual python list when instatntiating 
+    _convert_: partial
+    img_resolution: [64, 64]
+    img_channels: 2
+    out_channels: 1
+    # Classifier-free guided unconditional diffusion if label_dim = 0 
+    # else put the total number of classes to condition on 
+    label_dim: 0 
+    # Expected standard deviation of the training data.
+    sigma_data: 0.5
+    # Dropout probability
+    dropout: 0.13
+    # Channel stage base resolution
+    model_channels: 128
+    # Channel multplier per stage as a list
+    channel_mult: [1,2,2,2]
+    # List of stages with self-attention.
+    attn_stages: [2, 3]
+    # Augmentation label dimensionality, 0 = no augmentation.
+    augment_dim: 9
+
+  loss:
+    _target_: training.loss_pet.EDMLoss
+    P_mean: -1.2
+    P_std: 1.2 
+    sigma_data: 0.5
+
+
+  augment:
+    _target_: training.augment.AugmentPipe
+    # Augment probability 
+    p: 0.05
+    # Activated transformations
+    xflip: 1.e+8
+    yflip: 1
+    scale: 1
+    rotate_frac: 1
+    aniso: 1
+    translate_frac: 1
+
+  optimizer:
+    # Learning Rate - put any here does not matter as the scheduler will set during training the actual lr
+    lr: 3.e-5
+    # Parameters for Adam optimizer
+    betas: [0.9,0.999]
+    eps: 1.e-8
+
+  dataloader:
+    # Speed up the host to device transfer by enabling pin_memory
+    pin_memory: True
+    # DataLoader worker processes
+    num_workers: 1
+    # Number of batches loaded in advance by each worker
+    prefetch_factor: 2
+
+sampling:
+
+  # Network pickle file path or URL
+  network_pkl: 'results/00080-BrainWebSinogramsClean-gpus1-batch32/network-snapshot-000600.pkl'
+
+  # If conditional diffusion model then True 
+  # This is the model used in dose-enhancement task
+  conditional: True
+
+  # Only useful for conditional diffusion model
+  dataset:
+    _target_: training.dataset.BrainWebSinogramsClean
+    # Data path
+    path: 'datasets/brainweb_low_res'
+    # mode 
+    mode: 'infer'
+    # Need to be 0.25 the value of the high_dose_one
+    dose_mean_int: 2.5e+5
+    preprocessed: True
+
+  # Where to save the output images
+  outdir: 'out'
+
+  # Whether the output file is a standard pixelized image 
+  # if not save the whole generated dataset as a numpy array 
+  # of dimensions N x C x H x W
+  is_image: False
+
+  # If it is an image create subdirectory for every 1000 seeds
+  subdirs: True
+
+  # Random seeds for sampled Gaussians as a parse_int_list (e.g. 1,2,5-10)
+  # Total number of selected seeds will be the total number of outputed images
+  seeds: '0-639'
+
+  # Class id when conditional sampling
+  # For nconditional sampling use 'Null'
+  class_idx: Null
+
+  # Maximum batch size
+  max_batch_size: 64
+
+  sampler_kwargs:
+    # Number of sampling steps
+    num_steps: 60
+
+    # We use the EDM sampler from the EDM paper.
+    # Time is recovered as a function of noise.
+    # Here the function is the identity function t(sigma) = sigma
+
+    # For the timestep discretization (t_i) for i in [[0, N - 1]] 
+    # we use the EDM discretization scheme which is given by the function :
+    # t_i = ( sigma_max^(1/rho) + i/N-1 * ( sigma_max^(1/rho) - sigma_min^(1/rho) ) )^rho
+    
+    # Lowest noise level
+    # Following the EDM paper, 
+    # value is 0.002
+    sigma_min: 0.002
+
+    # Highest noise level.
+    # Following the EDM paper, 
+    # value is 80
+    sigma_max: 80
+
+    # Time step exponent
+    # Following the EDM paper, 
+    # value is 7
+    rho: 7
+
+    # We use Heun's second order ODE solver
+    # Optional SDE solver can be used by introducing
+    # noising step controled by four parameters
+
+    # Stochasticity strength
+    # if 0 the solver is a simple ODE solver
+    # Optimal when employing stochastic sampler is 40 from EDM paper 
+    S_churn: 40
+
+    # Stoch. min noise level
+    # This gives the timestep from which stochasticity is introduced
+    # Optimal when employing stochastic sampler is 0.05 from EDM paper 
+    S_min: 0.05
+
+
+    # Stoch. min noise level
+    # This gives the last timestep from which stochasticity is introduced
+    # Optimal when employing stochastic sampler is 50 from EDM paper 
+    S_max: 50
+
+    # Stoch. noise inflation
+    # This paramet inflates the stadard deviation of the stadard gaussian noise step
+    # Optimal when employing stochastic sampler is 1.003 from EDM paper 
+    S_noise: 1.003
