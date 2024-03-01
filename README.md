@@ -8,6 +8,7 @@ This code implement a :
 
 The practical implementation of these models follow closely the reasoning from article "Elucidating the Design Space of Diffusion-Based Generative Models" (Tero Karras, Miika Aittala, Timo Aila, Samuli Laine), link: https://arxiv.org/abs/2206.00364.
 
+Checkout the report uploaded in under the filename : "Stage_rapport_dose_reduction_et.pdf". 
 
 The code is subdivided  in the following way :
 
