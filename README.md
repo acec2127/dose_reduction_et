@@ -1,9 +1,13 @@
-# Diffusion model 
+# Coditional generative models applied to dose reduction task in emission tomography
 ## Presentation
 
-This code implement the diffusion model based on the article "Elucidating the Design Space of Diffusion-Based Generative Models" (EDM) (Tero Karras, Miika Aittala, Timo Aila and Samuli Laine, 2022)
-Link: https://arxiv.org/abs/2206.00364
-It also (and most importantly!) implement a conditional diffusion model - also known as Denoising Diffusion for Posterior Sampling (Jeremy Heng, Valentin De Bortoli and Arnaud Doucet, 2023) - for dose enhancement in PET-scans. Checkout the report in the docs for more details!
+This code implement a :
+- **conditional diffusion model** based on "Diffusion Schrödinger Bridges for Bayesian Computation" (Jeremy Heng, Valentin De Bortoli and Arnaud Doucet), link : https://arxiv.org/pdf/2308.14106.pdf
+- **condtional normalizing flow** model based on "Improving and generalizing flow-based generative models with minibatch optimal transport the article "Elucidating the Design Space of Diffusion-Based Generative Models" (Alexander Tong, Nikolay Malkin, Guillaume Huguet, Yanlei Zhang, Jarrid Rector-Brooks, Kilian Fatras, Guy Wolf, Yoshua Bengio) (EDM) (Tero Karras, Miika Aittala, Timo Aila and Samuli Laine, 2022), link : https://arxiv.org/pdf/2302.00482.pdf
+- **conditional stochastic interpolant** model based on "Stochastic interpolants with data-dependent couplings" (Michael S. Albergo, Mark Goldstein, Nicholas M. Boffi, Rajesh Ranganath, Eric Vanden-Eijnden), link : https://arxiv.org/pdf/2310.03725.pdf
+
+The practical implementation of these models follow closely the reasoning from article "Elucidating the Design Space of Diffusion-Based Generative Models" (Tero Karras, Miika Aittala, Timo Aila, Samuli Laine), link: https://arxiv.org/abs/2206.00364.
+
 
 The code is subdivided  in the following way :
 
@@ -107,4 +111,4 @@ Once trained you want to generate samples. To do so, select a pickled snapshot f
 ```
 torchrun --standalone --nproc_per_node=2 generate.py -cn=config_phantoms_0
 ```
-In the sampling sub-config dictionnary you'll need to input the seed numbers you'll want to use to generate samples. This will generate several random number generators, one for every generated samlples. It ensures samples are sampled from a different "reality". Seeds are given in parse-int list format, i.e. '0-63' for the first 64 seeds. You'll also find the option to make sampler stochastic or deterministic depending on the value of 'S\_churn' (see EDM paper for more details and the comments in the config file uploaded in the repository). Finally if you want the ouput file to be saved as images, use option "is\_image: True" in the config file and find the images in folder "out" (or the name specified in "outdir"). Otherwise the file will be saved in a npz file, with inside array "images" of dimensions N x H X W, where N is the total number of generated images and array "cond\_images" of same dimensions, which are the corresponding low-dose images, and H and W depends on the resolution you working off. When "is\_image"  is false we assumed images have only one channel dimension (in fact I think this option only work with the conditional diffusion model, need to check for the unconditional one sorry).
+In the sampling sub-config dictionnary you'll need to input the seed numbers you'll want to use to generate samples. This will generate several random number generators, one for every generated samlples. It ensures samples are sampled from a different "reality". Seeds are given in parse-int list format, i.e. '0-63' for the first 64 seeds. You'll also find the option to make sampler stochastic or deterministic depending on the value of 'S\_churn' (see EDM paper for more details and the comments in the config file uploaded in the repository). Finally if you want the ouput file to be saved as images, use option "is\_image: True" in the config file and find the images in folder "out" (or the name specified in "outdir"). Otherwise the file will be saved in a npz file, with inside array "images" of dimensions N x H X W, where N is the total number of generated images and array "cond\_images" of same dimensions, which are the corresponding low-dose images, and H and W depends on the resolution you working off. When "is\_image"  is false we assumed images have only one channel dimension.
