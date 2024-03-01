@@ -3,7 +3,7 @@
 
 This code implement a :
 - **conditional diffusion model** based on "Diffusion Schrödinger Bridges for Bayesian Computation" (Jeremy Heng, Valentin De Bortoli and Arnaud Doucet), link : https://arxiv.org/pdf/2308.14106.pdf
-- **condtional normalizing flow** model based on "Improving and generalizing flow-based generative models with minibatch optimal transport the article "Elucidating the Design Space of Diffusion-Based Generative Models" (Alexander Tong, Nikolay Malkin, Guillaume Huguet, Yanlei Zhang, Jarrid Rector-Brooks, Kilian Fatras, Guy Wolf, Yoshua Bengio) (EDM) (Tero Karras, Miika Aittala, Timo Aila and Samuli Laine, 2022), link : https://arxiv.org/pdf/2302.00482.pdf
+- **conditional continuous normalizing flow** model based on "Improving and generalizing flow-based generative models with minibatch optimal transport the article "Elucidating the Design Space of Diffusion-Based Generative Models" (Alexander Tong, Nikolay Malkin, Guillaume Huguet, Yanlei Zhang, Jarrid Rector-Brooks, Kilian Fatras, Guy Wolf, Yoshua Bengio) (EDM) (Tero Karras, Miika Aittala, Timo Aila and Samuli Laine, 2022), link : https://arxiv.org/pdf/2302.00482.pdf
 - **conditional stochastic interpolant** model based on "Stochastic interpolants with data-dependent couplings" (Michael S. Albergo, Mark Goldstein, Nicholas M. Boffi, Rajesh Ranganath, Eric Vanden-Eijnden), link : https://arxiv.org/pdf/2310.03725.pdf
 
 The practical implementation of these models follow closely the reasoning from article "Elucidating the Design Space of Diffusion-Based Generative Models" (Tero Karras, Miika Aittala, Timo Aila, Samuli Laine), link: https://arxiv.org/abs/2206.00364.
