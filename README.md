@@ -1,12 +1,15 @@
 # Coditional generative models applied to dose reduction task in emission tomography
+![Cond_resulst_et](/docs/images/et_results.png "Pairs of low-quality and high-quality images generated from the trained conditional diffusion
+model. The image on the left is the conditioning image and the one the right is the denoised version")
 ## Presentation
 
 This code implement a :
-- **conditional diffusion model** based on "Diffusion Schrödinger Bridges for Bayesian Computation" (Jeremy Heng, Valentin De Bortoli and Arnaud Doucet), link : https://arxiv.org/pdf/2308.14106.pdf
-- **conditional continuous normalizing flow** model based on "Improving and generalizing flow-based generative models with minibatch optimal transport the article "Elucidating the Design Space of Diffusion-Based Generative Models" (Alexander Tong, Nikolay Malkin, Guillaume Huguet, Yanlei Zhang, Jarrid Rector-Brooks, Kilian Fatras, Guy Wolf, Yoshua Bengio) (EDM) (Tero Karras, Miika Aittala, Timo Aila and Samuli Laine, 2022), link : https://arxiv.org/pdf/2302.00482.pdf
+- **conditional diffusion model** based on "Diffusion Schrödinger Bridges for Bayesian Computation" (Jeremy Heng, Valentin De Bortoli and Arnaud Doucet? 2023), link : https://arxiv.org/pdf/2308.14106.pdf
+- **conditional continuous normalizing flow** model based on "Improving and generalizing flow-based generative models with minibatch optimal transport the article "Elucidating the Design Space of Diffusion-Based Generative Models" (Alexander Tong, Nikolay Malkin, Guillaume Huguet, Yanlei Zhang, Jarrid Rector-Brooks, Kilian Fatras, Guy Wolf, Yoshua Bengio? 2023) link : https://arxiv.org/pdf/2302.00482.pdf
 - **conditional stochastic interpolant** model based on "Stochastic interpolants with data-dependent couplings" (Michael S. Albergo, Mark Goldstein, Nicholas M. Boffi, Rajesh Ranganath, Eric Vanden-Eijnden), link : https://arxiv.org/pdf/2310.03725.pdf
+adapted to the task the dose reduction task in emission tomography. Generic version of these generative models (in particular unconditional counterparts) are also included.
 
-The practical implementation of these models follow closely the reasoning from article "Elucidating the Design Space of Diffusion-Based Generative Models" (Tero Karras, Miika Aittala, Timo Aila, Samuli Laine), link: https://arxiv.org/abs/2206.00364.
+The practical implementation of these models follow closely the reasoning from article "Elucidating the Design Space of Diffusion-Based Generative Models" (Tero Karras, Miika Aittala, Timo Aila, Samuli Laine? 2022) (EDM), link: https://arxiv.org/abs/2206.00364. That is, the network employed is a reimplmentation of the ADM architecture from the paper "Diffusion Models Beat GANS on Image Synthesis" (Prafulla Dhariwal, Alex Nichol, 2021), which is further wrapped inside a preconditioning network adapted to the loss similar to the one found in the EDM paper. The repository also includes a a "non-leaky" augmentation  pipeline similar as in the EDM paper, which is activated only during the training phase. Finally, a gpu-parallelized reimplmenantion of the Maximum Likelihood Estimator Method algorithm for PET is included.
 
 Checkout the report uploaded in under the filename : "Stage_rapport_dose_reduction_et.pdf". 
 
@@ -30,7 +33,7 @@ The code is subdivided  in the following way :
     -loss.py : Implemenation of the loss as a an object. Pass the input from the trinaing_loop to the augmentation pipleine and then to the neural network and compute the loss.
     - loss_pet.py : Loss class for the conditional diffusion model applied to PET images. Both the diffused and the conditional input undergo the same transformations when passed to the augmentation pipeline.
     - trainnig_loop.py : Training loop called by the train.py file. Trains the model with config specified by the config file. We use an Adam optimizer, together with a cosine annealing schedule and an Exponential Moving Average (EMA). 
-    - training_loop_pet.py :Same as above but for the PET dose-enhancement conditional diffusion model.
+    - training_loop_pet.py : Same as above but for the PET dose-enhancement conditional diffusion model.
 - **train.py** :  Main training file. Preprocess information before passing it to the main training_loop file.
 - **generate.py** : Sampling function. Implments both a deterministic and a stochastich sampler solving the probability flow ODE backward in time and the backward diffusion SDE respectivly. Both use a Gaussian as the input. For every sample generated we employ a new random number generator, specifier by the input seeds.  
 - **environment.yml**: Dependencies to install as yaml file. 
