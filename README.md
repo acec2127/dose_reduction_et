@@ -1,5 +1,5 @@
 # Coditional generative models applied to dose reduction task in emission tomography
-![Cond_results_et](/docs/images/results_et.png "Pairs of low-quality and high-quality images generated from the trained conditional diffusion
+![Cond_results_et](/docs/images/results_et.PNG "Pairs of low-quality and high-quality images generated from the trained conditional diffusion
 model. The image on the left is the conditioning image and the one the right is the denoised version")
 ## Presentation
 
