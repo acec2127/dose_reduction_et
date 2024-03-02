@@ -1,6 +1,7 @@
 # Coditional generative models applied to dose reduction task in emission tomography
-![Cond_results_et](/docs/images/results_et.PNG "Pairs of low-quality and high-quality images generated from the trained conditional diffusion
-model. The image on the left is the conditioning image and the one the right is the denoised version")
+![Cond_results_et](/docs/images/results_et.PNG "Pairs of low-quality and high-quality images generated from the trained conditional diffusion model. The image on the left is the conditioning image and the one the right is the denoised version")
+Figure : Pairs of low-quality and high-quality images generated from the trained conditional diffusion model. The image on the left is the conditioning image and the one the right is the denoised version. Here the superesolving time factor is 4, that is the image on the left is reconstructed after counting photons for 5 minutes and the image on the right is the same image but reconstructed for a time exposure of 20 minutes. 
+
 ## Presentation
 
 This code implement a :
